@@ -8,6 +8,10 @@ require 'fastimage'
 #url = "http://www.jcrew.com/AST/Navigation/Shoes/men/PRDOVR~28357/28357.jsp"
 #html =`cat data`
 
+STORES = {
+"www.jcrew.com" => 26
+}
+
 
 STDIN.each_line do |line|
   url,html=line.split("\t")
@@ -28,6 +32,7 @@ STDIN.each_line do |line|
   images = []
   image = ""
   image_size = [0,0]
+  store_id = 0
 
 
   ##
@@ -123,12 +128,23 @@ STDIN.each_line do |line|
     end
   end #if image length zero
 
+
+  ##
+  # Extract store id.
+  ##
+  STORES.each do |domain,id|
+    if url.match(domain) 
+      store_id = id 
+      break
+    end
+  end
+
   ##
   # Final test of output.
   ##
-  next if title.length.zero? || image.length.zero?
+  next if title.length.zero? || image.length.zero? || store_id.zero?
 
-  puts [url,title,description,image].join("\t")
+  puts [url,title,image,store_id,description].join("\t")
 
   rescue => ex
     $stderr.puts "Error with url - #{url} : #{ex.message}"
