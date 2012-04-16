@@ -4,6 +4,7 @@ require 'rubygems'
 require 'nokogiri'
 require 'fastimage'
 
+# Debugging inputs.
 #url = "http://www.jcrew.com/AST/Navigation/Shoes/men/PRDOVR~28357/28357.jsp"
 #html =`cat data`
 
@@ -13,8 +14,14 @@ STDIN.each_line do |line|
 
   begin
 
+  ##
+  # Test if input is proper.
+  ##
   next if url.nil? || url.length.zero? || html.nil? || html.length.zero?
 
+  ##
+  # Initialize.
+  ##
   uri = URI.parse(URI.encode(url))
   title = ""
   description = ""
@@ -22,16 +29,22 @@ STDIN.each_line do |line|
   image = ""
   image_size = [0,0]
 
+
+  ##
+  # Test if the html contains a product.
+  ##
   next unless html.match("og:title")
 
 
+  ##
+  # Parse html.
+  ##
   doc = Nokogiri::HTML(html)
-
   next if doc.nil?
 
 
   ##
-  # Title
+  # Extract product title.
   ##
   doc.xpath("//meta[@property='og:title']/@content").each do |node|
     title = node.value if node.value
@@ -47,7 +60,7 @@ STDIN.each_line do |line|
 
 
   ##
-  # Description
+  # Extract product description.
   ##
   doc.xpath("//meta[@property='og:description']/@content").each do |node|
     description = node.value if node.value
@@ -59,7 +72,7 @@ STDIN.each_line do |line|
 
 
   ##
-  # Image
+  # Extract potential product images.
   ##
   doc.xpath("//meta[@property='og:image']/@content").each do |node|
     images << node.value if node.value
@@ -74,15 +87,18 @@ STDIN.each_line do |line|
                   src : 
                   URI.decode(uri.merge(URI.encode(src)).to_s).gsub("¥","\\"))
     rescue
-      puts "Error parsing image src - #{src}"
+      $stderr.puts "Error parsing image src - #{src}"
     end
   end
 
+  ##
+  # Extract best product image.
+  ##
   images.each do |img|
     begin
       size = FastImage.size(img)
     rescue
-      puts "Error fetching img - #{img}"
+      $stderr.puts "Error fetching size of img - #{img}"
     end
 
     if size && size[0] > image_size[0] && size[1] > image_size[1]
@@ -91,16 +107,10 @@ STDIN.each_line do |line|
     end
   end
 
-
-  puts "Url: " + url
-  puts "Tilte: " + title
-  puts "Description: " + description
-  puts "Image: " + image
-  puts "Image Size: " + image_size.join(",")
-  puts ""
+  puts [url,title,description,image].join("\t")
 
   rescue
-    puts "Error with url - #{url}"
+    $stderr.puts "Error with url - #{url}"
   end
 
 end
