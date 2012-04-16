@@ -72,45 +72,66 @@ STDIN.each_line do |line|
 
 
   ##
-  # Extract potential product images.
+  # Extract og product image.
   ##
   doc.xpath("//meta[@property='og:image']/@content").each do |node|
-    images << node.value if node.value
-  end
-
-  doc.xpath("//img").each do |img|
-    src = img['src']
-    next if src.nil? || src.length.zero?
+    og_image = node.value 
+    next if og_image.nil?
 
     begin
-      images << (src.match(/^http/) ? 
-                  src : 
-                  URI.decode(uri.merge(URI.encode(src)).to_s).gsub("¥","\\"))
-    rescue
-      $stderr.puts "Error parsing image src - #{src}"
+      size = FastImage.size(og_image)
+      image = og_image if size[0] > 149 && size[1] > 149
+    rescue => ex
+      $stderr.puts "Error fetching size of og img - #{og_image} : #{ex.message}"
     end
   end
 
   ##
-  # Extract best product image.
+  # Extract product images from html.
   ##
-  images.each do |img|
-    begin
-      size = FastImage.size(img)
-    rescue
-      $stderr.puts "Error fetching size of img - #{img}"
+  if image.length.zero?
+    doc.xpath("//img").each do |img|
+      src = img['src']
+      next if src.nil? || src.length.zero?
+
+      begin
+        images << (src.match(/^http/) ? 
+                    src : 
+                    URI.decode(uri.merge(URI.encode(src)).to_s).gsub("¥","\\"))
+      rescue => ex
+        $stderr.puts "Error parsing image src - #{src} : #{ex.message}"
+      end
     end
 
-    if size && size[0] > image_size[0] && size[1] > image_size[1]
-      image = img 
-      image_size = size
+    ##
+    # Extract best product image.
+    ##
+    images.each do |img|
+      begin
+        size = FastImage.size(img)
+        aspectRatio = size[0] / (size[1] + 0.0)
+      rescue => ex
+        $stderr.puts "Error fetching size of img - #{img} : #{ex.message}"
+      end
+
+      if size && size[0] > 149 && size[1] > 149 && 
+          size[0] > image_size[0] && size[1] > image_size[1] &&
+          aspectRatio < 3 && aspectRatio > 0.3
+        image = img 
+        image_size = size
+      end
     end
-  end
+  end #if image length zero
+
+  ##
+  # Final test of output.
+  ##
+  next if title.length.zero? || image.length.zero?
 
   puts [url,title,description,image].join("\t")
 
-  rescue
-    $stderr.puts "Error with url - #{url}"
+  rescue => ex
+    $stderr.puts "Error with url - #{url} : #{ex.message}"
   end
 
 end
