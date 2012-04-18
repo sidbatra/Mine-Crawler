@@ -1,7 +1,7 @@
 create external table pages (url string,html string) row format delimited fields terminated by '\t' stored as textfile location "/hive/pages";
 load data inpath "/output/dump" into table pages;
 
-create external table products (url string,title string,image string,store_id string,description string) row format delimited fields terminated by '\t' stored as textfile location "s3://denwen-mine-crawl-logs/output/products";
+create external table products (url string,title string,image string,store_id string,description string) row format delimited fields terminated by '\t' stored as textfile location "s3://denwen-mine-crawls/1334711638/products";
 
 add file /home/hadoop/extract_products.rb;
 

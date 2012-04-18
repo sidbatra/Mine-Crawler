@@ -9,6 +9,7 @@ require 'fastimage'
 #html =`cat data`
 
 STORES = {
+"www.ae.com" => 31,
 "www.jcrew.com" => 26
 }
 
