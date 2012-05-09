@@ -49,7 +49,7 @@ AWS::S3::S3Object.store(
 # Build nutch
 #############################
 
-#puts `cd apache-nutch-1.4-bin && ant`
+puts `cd apache-nutch-1.4-bin && ant`
 
 
 #############################
