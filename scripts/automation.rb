@@ -123,7 +123,7 @@ puts `#{command}`
 
 command = "./elastic-mapreduce/elastic-mapreduce #{@job_id} "\
           "--key-pair-file #{@key_pair_path} "\
-          "--ssh 'ruby scripts/crawl.rb #{@env} #{@name} #{@bucket} &> crawl.txt &'"
+          "--ssh 'sh -c \"cd /home/hadoop ; nohup ruby scripts/crawl.rb #{@env} #{@name} #{@bucket} > crawl.txt 2>&1 &\"'"
 
 puts `#{command}`
 
