@@ -45,7 +45,7 @@ command = "deploy/bin/nutch crawl "\
           "-dir /crawl "\
           "-threads #{@threads}"
 
-puts `command`
+puts `#{command}`
 
 
 
@@ -53,7 +53,7 @@ puts `command`
 # Dump crawled links & html
 #############################
 
-command = "bin/nutch readseg "\
+command = "deploy/bin/nutch readseg "\
           "-dump /crawl/segments/*  "\
           "/output  "\
           "-nogenerate "\
@@ -61,7 +61,7 @@ command = "bin/nutch readseg "\
           "-noparsedata "\
           "-noparsetext "
 
-puts `command`
+puts `#{command}`
 
 
 
@@ -69,7 +69,7 @@ puts `command`
 # Extract unique products
 #############################
 
-hive -f "hive.sql" 
+puts `hive -f "scripts/hive.sql"`
 
 
 #############################

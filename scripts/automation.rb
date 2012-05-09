@@ -4,8 +4,8 @@ require 'rubygems'
 require 'aws/s3'
 
 
-if ARGV.length < 2
-  puts "Usage - ruby automate.rb <environment> <seed.txt path>"
+if ARGV.length < 3
+  puts "Usage - ruby automate.rb <environment> <seed.txt path> <pem file path>"
   exit
 elsif !["staging","production"].include?(ARGV[0])
   puts "Invalid environment. Valid options - staging,production"
@@ -14,13 +14,14 @@ end
 
 @env = ARGV[0]
 @seed_path = ARGV[1]
+@key_pair_path = ARGV[2]
 
-@name = "1336513522" #Time.now.to_i.to_s
+@name = Time.now.to_i.to_s
 @bucket = "denwen-mine-crawler-#{@env}"
 @job_id = ""
 
 
-puts @env,@seed_path,@name,@bucket
+puts @env,@seed_path,@key_pair_path,@name,@bucket
 
 
 
@@ -61,7 +62,7 @@ command = "./elastic-mapreduce/elastic-mapreduce --create "\
           "--name 'Crawl #{@env.capitalize} #{@name}' "\
           "--master-instance-type m1.small "\
           "--slave-instance-type m1.small "\
-          "--num-instances 1  "\
+          "--num-instances 10  "\
           "--key-pair ec2-bootup "\
           "--availability-zone us-east-1b "\
           "--log-uri s3n://#{@bucket}/#{@name}/logs "\
@@ -90,7 +91,7 @@ end
 state = ""
 
 while state != "WAITING"
-  sleep 15
+  sleep 30
 
   puts output = `./elastic-mapreduce/elastic-mapreduce --list #{@job_id}`
   state = output.split[1]
@@ -101,13 +102,34 @@ while state != "WAITING"
   end
 end
 
-# upload resources to master - mr scripts, hive script, nutch deploy folder
-# scp -i /home/sbat/.ssh/id_ec2_bootup -r apache-nutch-1.4-bin/runtime/deploy/ hadoop@ec2-23-20-24-12.compute-1.amazonaws.com:~
-# scp -i /home/sbat/.ssh/id_ec2_bootup scripts/hive.sql scripts/mr/extract_products.rb   hadoop@ec2-23-20-24-12.compute-1.amazonaws.com:~
+
+#############################
+# Upload resources to cluster
+#############################
+
+command = "./elastic-mapreduce/elastic-mapreduce #{@job_id} "\
+          "--key-pair-file #{@key_pair_path} "\
+          "--scp scripts/ "\
+          "--to /home/hadoop "\
+          "--scp apache-nutch-1.4-bin/runtime/deploy/ "\
+          "--to /home/hadoop"
+
+puts `#{command}`
+          
+
+#############################
+# Launch crawl
+#############################
+
+command = "./elastic-mapreduce/elastic-mapreduce #{@job_id} "\
+          "--key-pair-file #{@key_pair_path} "\
+          "--ssh 'ruby scripts/crawl.rb #{@env} #{@name} #{@bucket} &> crawl.txt &'"
+
+puts `#{command}`
 
 
-# run crawl.sh on master with correct folder.
 
-# wait until crawl finishes. 
+
+
 # download extracted products distributed table.
 # insert into products db
