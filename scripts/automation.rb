@@ -117,10 +117,12 @@ end
 
 command = "./elastic-mapreduce/elastic-mapreduce #{@job_id} "\
           "--key-pair-file #{@key_pair_path} "\
-          "--scp scripts/ #{@hash_path} "\
+          "--scp scripts/ "\
           "--to /home/hadoop "\
           "--scp apache-nutch-1.4-bin/runtime/deploy/ "\
-          "--to /home/hadoop"
+          "--to /home/hadoop "\
+          "--scp #{@hash_path} "\
+          "--to /home/hadoop/hash.txt "
 
 puts `#{command}`
           
