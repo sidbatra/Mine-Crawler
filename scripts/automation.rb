@@ -62,7 +62,7 @@ command = "./elastic-mapreduce/elastic-mapreduce --create "\
           "--name 'Crawl #{@env.capitalize} #{@name}' "\
           "--master-instance-type m1.small "\
           "--slave-instance-type m1.small "\
-          "--num-instances 10  "\
+          "--num-instances 20  "\
           "--key-pair ec2-bootup "\
           "--availability-zone us-east-1b "\
           "--log-uri s3n://#{@bucket}/#{@name}/logs "\

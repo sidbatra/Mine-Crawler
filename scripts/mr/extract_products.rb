@@ -4,14 +4,22 @@ require 'rubygems'
 require 'nokogiri'
 require 'fastimage'
 
+stores_file = "/home/hadoop/hash.txt"
+
 # Debugging inputs.
 #url = "http://www.jcrew.com/AST/Navigation/Shoes/men/PRDOVR~28357/28357.jsp"
 #html =`cat data`
+#stores_file = "data/hash.txt"
 
-STORES = {
-"www.ae.com" => 31,
-"www.jcrew.com" => 26
-}
+
+STORES = {}
+File.open(stores_file,'r') do |file|
+  file.each do |line|
+    domain,id = line.chomp.split "\t"
+    STORES[domain] = id.to_i
+  end
+end
+
 
 
 STDIN.each_line do |line|
