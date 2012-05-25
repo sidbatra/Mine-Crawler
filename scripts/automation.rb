@@ -4,8 +4,9 @@ require 'rubygems'
 require 'aws/s3'
 
 
-if ARGV.length < 3
-  puts "Usage - ruby automate.rb <environment> <seed.txt path> <pem file path>"
+if ARGV.length < 4
+  puts "Usage - ruby automate.rb <environment> <seed.txt path> "\
+        "<hash.txt path> <pem file path>"
   exit
 elsif !["staging","production"].include?(ARGV[0])
   puts "Invalid environment. Valid options - staging,production"
@@ -14,14 +15,21 @@ end
 
 @env = ARGV[0]
 @seed_path = ARGV[1]
-@key_pair_path = ARGV[2]
+@hash_path = ARGV[2]
+@key_pair_path = ARGV[3]
 
 @name = Time.now.to_i.to_s
 @bucket = "denwen-mine-crawler-#{@env}"
 @job_id = ""
 
+if @env.start_with? 'p'
+  @instances = 20
+else
+  @instances = 10
+end
 
-puts @env,@seed_path,@key_pair_path,@name,@bucket
+
+puts @env,@seed_path,@hash_path,@key_pair_path,@name,@bucket,@instances
 
 
 
@@ -62,7 +70,7 @@ command = "./elastic-mapreduce/elastic-mapreduce --create "\
           "--name 'Crawl #{@env.capitalize} #{@name}' "\
           "--master-instance-type m1.small "\
           "--slave-instance-type m1.small "\
-          "--num-instances 20  "\
+          "--num-instances #{@instances}  "\
           "--key-pair ec2-bootup "\
           "--availability-zone us-east-1b "\
           "--log-uri s3n://#{@bucket}/#{@name}/logs "\
@@ -109,7 +117,7 @@ end
 
 command = "./elastic-mapreduce/elastic-mapreduce #{@job_id} "\
           "--key-pair-file #{@key_pair_path} "\
-          "--scp scripts/ "\
+          "--scp scripts/ #{@hash_path} "\
           "--to /home/hadoop "\
           "--scp apache-nutch-1.4-bin/runtime/deploy/ "\
           "--to /home/hadoop"
