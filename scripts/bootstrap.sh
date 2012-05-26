@@ -14,3 +14,4 @@ sudo gem update --system
 sudo gem install nokogiri
 sudo gem install fastimage
 
+hadoop fs -copyToLocal $1 /home/hadoop/

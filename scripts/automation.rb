@@ -51,6 +51,11 @@ AWS::S3::S3Object.store(
   open(@seed_path),
   @bucket)
 
+AWS::S3::S3Object.store(
+  "#{@name}/hash.txt",
+  open(@hash_path),
+  @bucket)
+
 
 
 #############################
@@ -80,7 +85,8 @@ command = "./elastic-mapreduce/elastic-mapreduce --create "\
           "--arg mapred.reduce.tasks.speculative.execution=false "\
           "--arg --mapred-key-value "\
           "--arg mapred.reduce.tasks.speculative.execution=false "\
-          "--bootstrap-action s3n://#{@bucket}/#{@name}/bootstrap.sh"
+          "--bootstrap-action s3n://#{@bucket}/#{@name}/bootstrap.sh "\
+          "--arg s3n://#{@bucket}/#{@name}/hash.txt"
 
 puts output = `#{command}`
 
@@ -120,9 +126,7 @@ command = "./elastic-mapreduce/elastic-mapreduce #{@job_id} "\
           "--scp scripts/ "\
           "--to /home/hadoop "\
           "--scp apache-nutch-1.4-bin/runtime/deploy/ "\
-          "--to /home/hadoop "\
-          "--scp #{@hash_path} "\
-          "--to /home/hadoop/hash.txt "
+          "--to /home/hadoop "
 
 puts `#{command}`
           
