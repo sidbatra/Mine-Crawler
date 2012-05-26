@@ -104,7 +104,7 @@ STDIN.each_line do |line|
 
     begin
       size = FastImage.size(og_image)
-      image = og_image if size[0] > 149 && size[1] > 149
+      image = og_image if size[0] > 149 || size[1] > 149
     rescue => ex
       $stderr.puts "Error fetching size of og img - #{og_image} : #{ex.message}"
     end
@@ -138,7 +138,7 @@ STDIN.each_line do |line|
         $stderr.puts "Error fetching size of img - #{img} : #{ex.message}"
       end
 
-      if size && size[0] > 149 && size[1] > 149 && 
+      if size && (size[0] > 149 || size[1] > 149) && 
           size[0] > image_size[0] && size[1] > image_size[1] &&
           aspectRatio < 3 && aspectRatio > 0.3
         image = img 
