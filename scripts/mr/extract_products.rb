@@ -9,7 +9,7 @@ stores_file = "/home/hadoop/hash.txt"
 # Debugging inputs.
 #url = "http://www.jcrew.com/AST/Navigation/Shoes/men/PRDOVR~28357/28357.jsp"
 #html =`cat data`
-#stores_file = "data/hash.txt"
+#stores_file = "data/giant_hash.txt"
 
 
 STORES = {}
@@ -68,10 +68,17 @@ STDIN.each_line do |line|
     title = node.children.text if node.children && node.children.text
   end if title.length.zero?
 
+  doc.xpath("//Title").each do |node|
+    title = node.children.text if node.children && node.children.text
+  end if title.length.zero?
+
   doc.xpath("//meta[@name='title']/@content").each do |node|
     title = node.value if node.value
   end if title.length.zero?
 
+  doc.xpath("//meta[@name='Title']/@content").each do |node|
+    title = node.value if node.value
+  end if title.length.zero?
 
   ##
   # Extract product description.
@@ -84,6 +91,9 @@ STDIN.each_line do |line|
     description = node.value if node.value
   end if description.length.zero?
 
+  doc.xpath("//meta[@name='Description']/@content").each do |node|
+    description = node.value if node.value
+  end if description.length.zero?
 
   ##
   # Extract og product image.
