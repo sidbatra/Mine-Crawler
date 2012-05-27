@@ -24,8 +24,12 @@ end
 
 if @env.start_with? 'p'
   @instances = 20
+  @spot_instances = 20
+  @spot_price = 0.04
 else
   @instances = 10
+  @spot_instances = 10
+  @spot_price = 0.04
 end
 
 
@@ -75,7 +79,9 @@ command = "./elastic-mapreduce/elastic-mapreduce --create "\
           "--name 'Crawl #{@env.capitalize} #{@name}' "\
           "--master-instance-type m1.small "\
           "--slave-instance-type m1.small "\
-          "--num-instances #{@instances}  "\
+          "--num-instances #{@instances} "\
+          "--instance-group task --instance-type m1.small "\
+          "--instance-count #{@spot_instances} --bid-price #{@spot_price} "\
           "--key-pair ec2-bootup "\
           "--availability-zone us-east-1b "\
           "--log-uri s3n://#{@bucket}/#{@name}/logs "\
