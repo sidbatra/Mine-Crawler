@@ -163,7 +163,8 @@ STDIN.each_line do |line|
   ##
   next if title.length.zero? || image.length.zero? || store_id.zero?
 
-  puts [url,title,image,store_id,description].join("\t")
+  puts [url,title.gsub(/(\r|\n|\t)/," "),image,
+        store_id,description.gsub(/(\r|\n|\t)/," ")].join("\t")
 
   rescue => ex
     $stderr.puts "Error with url - #{url} : #{ex.message}"
