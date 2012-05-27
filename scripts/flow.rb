@@ -6,3 +6,8 @@ wait to finish
 check logs
 
 terminate job flow
+
+
+CRAWLER - ruby script/download.rb NAME BUCKET
+MINE - RAILS_ENV=production rake products:import:crawled dir=~/crawler/NAME/products
+MINE - RAILS_ENV=prouction rake sunspot:solr:index
