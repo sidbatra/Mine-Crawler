@@ -23,9 +23,9 @@ end
 @job_id = ""
 
 if @env.start_with? 'p'
-  @instances = 20
-  @spot_instances = 20
-  @spot_price = 0.04
+  @instances = 31
+  @spot_instances = 69
+  @spot_price = 0.03
 else
   @instances = 10
   @spot_instances = 10
@@ -77,7 +77,7 @@ command = "./elastic-mapreduce/elastic-mapreduce --create "\
           "--hive-interactive "\
           "--alive "\
           "--name 'Crawl #{@env.capitalize} #{@name}' "\
-          "--master-instance-type m1.small "\
+          "--master-instance-type m1.large "\
           "--slave-instance-type m1.small "\
           "--num-instances #{@instances} "\
           "--instance-group task --instance-type m1.small "\
