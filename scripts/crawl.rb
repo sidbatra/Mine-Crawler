@@ -20,17 +20,18 @@ if @env.start_with? "s"
   @top_n = 1000
   @threads = 21
 else
-  @depth = 20
-  @top_n = 2000000
+  @depth = 12
+  @top_n = 1000000
   @threads = 21
 end
 
 
 #############################
-# Copy crawl db from S3
+# Setup crawl directory
 #############################
 
-puts `hadoop distcp s3n://#{@bucket}/crawl /crawl`
+#puts `hadoop distcp s3n://#{@bucket}/crawl /crawl`
+puts `hadoop fs -mkdir /crawl`
 
 
 
@@ -80,8 +81,9 @@ puts `hadoop distcp /hive/products s3n://#{@bucket}/#{@name}/products`
 
 
 #############################
-# Update crawldb on s3
+# Upload crawldb to s3
 #############################
 
-puts `hadoop distcp -overwrite /crawl s3n://#{@bucket}/crawl`
+#puts `hadoop distcp -overwrite /crawl s3n://#{@bucket}/crawl`
+#puts `hadoop distcp /crawl s3n://#{@bucket}/#{@name}/crawl`
 
