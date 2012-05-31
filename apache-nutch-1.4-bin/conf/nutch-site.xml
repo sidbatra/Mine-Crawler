@@ -81,8 +81,19 @@
 </property>
 
 <property>
+  <name>fetcher.threads.fetch</name>
+  <value>10</value>
+  <description>The number of FetcherThreads the fetcher should use.
+  This is also determines the maximum number of requests that are
+  made at once (each FetcherThread handles one connection). The total
+  number of threads running in distributed mode will be the number of
+  fetcher threads * number of nodes as fetcher has one map task per node.
+  </description>
+</property>
+
+<property>
   <name>fetcher.threads.per.queue</name>
-  <value>20</value>
+  <value>10</value>
   <description>This number is the maximum number of threads that
     should be allowed to access a queue at one time. Replaces 
     deprecated parameter 'fetcher.threads.per.host'.
