@@ -18,11 +18,11 @@ puts @env,@name,@bucket
 if @env.start_with? "s"
   @depth = 6
   @top_n = 1000
-  @threads = 21
+  @threads = 20
 else
   @depth = 12
   @top_n = 1000000
-  @threads = 21
+  @threads = 20
 end
 
 
