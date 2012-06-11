@@ -24,12 +24,12 @@ end
 
 if @env.start_with? 'p'
   @instances = 31
-  @spot_instances = 69
-  @spot_price = 0.03
-else
-  @instances = 10
-  @spot_instances = 10
+  @spot_instances = 30
   @spot_price = 0.04
+else
+  @instances = 2
+  @spot_instances = 1
+  @spot_price = 0.06
 end
 
 
@@ -78,7 +78,7 @@ command = "./elastic-mapreduce/elastic-mapreduce --create "\
           "--alive "\
           "--name 'Crawl #{@env.capitalize} #{@name}' "\
           "--master-instance-type m1.large "\
-          "--slave-instance-type m1.small "\
+          "--slave-instance-type c1.medium "\
           "--num-instances #{@instances} "\
           "--instance-group task --instance-type m1.small "\
           "--instance-count #{@spot_instances} --bid-price #{@spot_price} "\
