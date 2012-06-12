@@ -81,13 +81,36 @@
 </property>
 
 <property>
+  <name>fetcher.threads.fetch</name>
+  <value>10</value>
+  <description>The number of FetcherThreads the fetcher should use.
+  This is also determines the maximum number of requests that are
+  made at once (each FetcherThread handles one connection). The total
+  number of threads running in distributed mode will be the number of
+  fetcher threads * number of nodes as fetcher has one map task per node.
+  </description>
+</property>
+
+<property>
   <name>fetcher.threads.per.queue</name>
-  <value>20</value>
+  <value>10</value>
   <description>This number is the maximum number of threads that
     should be allowed to access a queue at one time. Replaces 
     deprecated parameter 'fetcher.threads.per.host'.
    </description>
 </property>
+
+<property>
+ <name>fetcher.max.crawl.delay</name>
+ <value>120</value>
+ <description>
+ If the Crawl-Delay in robots.txt is set to greater than this value (in
+ seconds) then the fetcher will skip this page, generating an error report.
+ If set to -1 the fetcher will never skip such pages and will wait the
+ amount of time retrieved from robots.txt Crawl-Delay, however long that
+ might be.
+ </description>
+</property> 
 
 <property>
    <name>db.max.outlinks.per.page</name>
@@ -104,6 +127,16 @@
   <description>The default implementation of a page signature. Signatures
   created with this implementation will be used for duplicate detection
   and removal.</description>
+</property>
+
+<property>
+  <name>parser.html.outlinks.ignore_tags</name>
+  <value>img,script,link,form</value>
+  <description>Comma separated list of HTML tags, from which outlinks 
+  shouldn't be extracted. Nutch takes links from: a, area, form, frame, 
+  iframe, script, link, img. If you add any of those tags here, it
+  won't be taken. Default is empty list. Probably reasonable value
+  for most people would be "img,script,link".</description>
 </property>
 
 </configuration>
