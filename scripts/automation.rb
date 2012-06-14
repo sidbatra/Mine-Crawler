@@ -23,8 +23,8 @@ end
 @job_id = ""
 
 if @env.start_with? 'p'
-  @instances = 31
-  @spot_instances = 30
+  @instances = 51
+  @spot_instances = 50
   @spot_price = 0.04
 else
   @instances = 2
