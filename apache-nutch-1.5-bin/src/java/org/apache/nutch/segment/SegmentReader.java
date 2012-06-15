@@ -174,21 +174,27 @@ public class SegmentReader extends Configured implements
           throws IOException {
     StringBuffer dump = new StringBuffer();
 
-    dump.append("\nRecno:: ").append(recNo++).append("\n");
-    dump.append("URL:: " + key.toString() + "\n");
+    //dump.append("\nRecno:: ").append(recNo++).append("\n");
+    //dump.append("URL:: " + key.toString() + "\n");
     while (values.hasNext()) {
       Writable value = values.next().get(); // unwrap
-      if (value instanceof CrawlDatum) {
-        dump.append("\nCrawlDatum::\n").append(((CrawlDatum) value).toString());
-      } else if (value instanceof Content) {
-        dump.append("\nContent::\n").append(((Content) value).toString());
-      } else if (value instanceof ParseData) {
-        dump.append("\nParseData::\n").append(((ParseData) value).toString());
-      } else if (value instanceof ParseText) {
-        dump.append("\nParseText::\n").append(((ParseText) value).toString());
-      } else if (LOG.isWarnEnabled()) {
-        LOG.warn("Unrecognized type: " + value.getClass());
+      if (value instanceof Content) {
+        String content = new String(((Content) value).getContent());
+        content = content.replaceAll("(\\r|\\n|\\t)"," ");
+
+        dump.append(key.toString()).append("\t").append(content);
       }
+      //if (value instanceof CrawlDatum) {
+      //  dump.append("\nCrawlDatum::\n").append(((CrawlDatum) value).toString());
+      //} else if (value instanceof Content) {
+      //  dump.append("\nContent::\n").append(((Content) value).toString());
+      //} else if (value instanceof ParseData) {
+      //  dump.append("\nParseData::\n").append(((ParseData) value).toString());
+      //} else if (value instanceof ParseText) {
+      //  dump.append("\nParseText::\n").append(((ParseText) value).toString());
+      //} else if (LOG.isWarnEnabled()) {
+      //  LOG.warn("Unrecognized type: " + value.getClass());
+      //}
     }
     output.collect(key, new Text(dump.toString()));
   }
