@@ -23,8 +23,8 @@ end
 @job_id = ""
 
 if @env.start_with? 'p'
-  @instances = 51
-  @spot_instances = 50
+  @instances = 31
+  @spot_instances = 30
   @spot_price = 0.04
 else
   @instances = 2
@@ -86,6 +86,7 @@ command = "./elastic-mapreduce/elastic-mapreduce --create "\
           "--availability-zone us-east-1b "\
           "--log-uri s3n://#{@bucket}/#{@name}/logs "\
           "--enable-debugging "\
+          "--bootstrap-action s3n://elasticmapreduce/bootstrap-actions/configurations/latest/memory-intensive "\
           "--bootstrap-action s3n://elasticmapreduce/bootstrap-actions/configure-hadoop "\
           "--arg --site-key-value "\
           "--arg mapred.reduce.tasks.speculative.execution=false "\
