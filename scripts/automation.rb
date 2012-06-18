@@ -20,6 +20,7 @@ end
 
 @name = Time.now.to_i.to_s
 @bucket = "denwen-mine-crawler-#{@env}"
+@nutch_path = "./apache-nutch-1.5-bin"
 @job_id = ""
 
 if @env.start_with? 'p'
@@ -66,7 +67,9 @@ AWS::S3::S3Object.store(
 # Build nutch
 #############################
 
-puts `cd apache-nutch-1.4-bin && ant`
+puts `cd #{@nutch_path} && ant`
+puts `mv #{@nutch_path}/runtime/deploy/apache-nutch-1.5.job #{@nutch_path}/runtime/deploy/nutch-1.5.job`
+
 
 
 #############################
@@ -132,7 +135,7 @@ command = "./elastic-mapreduce/elastic-mapreduce #{@job_id} "\
           "--key-pair-file #{@key_pair_path} "\
           "--scp scripts/ "\
           "--to /home/hadoop "\
-          "--scp apache-nutch-1.4-bin/runtime/deploy/ "\
+          "--scp #{@nutch_path}/runtime/deploy/ "\
           "--to /home/hadoop "
 
 puts `#{command}`
