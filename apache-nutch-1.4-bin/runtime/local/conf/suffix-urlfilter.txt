@@ -89,3 +89,6 @@
 # disc-images
 .iso
 .bin
+
+# extra
+.pdf
