@@ -62,15 +62,6 @@
 </property>
 
 <property>
-  <name>db.ignore.external.links</name>
-  <value>true</value>
-  <description>If true, outlinks leading from a page to external hosts
-  will be ignored. This is an effective way to limit the crawl to include
-  only initially injected hosts, without creating complex URLFilters.
-  </description>
-</property>
-
-<property>
   <name>http.content.limit</name>
   <value>-1</value>
   <description>The length limit for downloaded content using the http://
@@ -113,6 +104,15 @@
 </property> 
 
 <property>
+  <name>db.ignore.external.links</name>
+  <value>true</value>
+  <description>If true, outlinks leading from a page to external hosts
+  will be ignored. This is an effective way to limit the crawl to include
+  only initially injected hosts, without creating complex URLFilters.
+  </description>
+</property>
+
+<property>
    <name>db.max.outlinks.per.page</name>
    <value>-1</value>
    <description>The maximum number of outlinks that we'll process for a page.
@@ -122,11 +122,27 @@
  </property>
 
 <property>
+  <name>db.update.max.inlinks</name>
+  <value>10</value>
+  <description>Maximum number of inlinks to take into account when updating 
+  a URL score in the crawlDB. Only the best scoring inlinks are kept. 
+  </description>
+</property>
+
+<property>
   <name>db.max.inlinks</name>
   <value>10</value>
   <description>Maximum number of Inlinks per URL to be kept in LinkDb.
   If "invertlinks" finds more inlinks than this number, only the first
   N inlinks will be stored, and the rest will be discarded.
+  </description>
+</property>
+
+<property>
+  <name>db.update.purge.404</name>
+  <value>true</value>
+  <description>If true, updatedb will add purge records with status DB_GONE
+  from the CrawlDB.
   </description>
 </property>
 

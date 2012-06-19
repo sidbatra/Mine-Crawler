@@ -1226,7 +1226,7 @@
 <!-- parse-metatags plugin properties -->
 <property>
   <name>metatags.names</name>
-  <value>description;keywords</value>
+  <value></value>
   <description> Names of the metatags to extract, separated by;. 
   Use '*' to extract all metatags. Prefixes the names with 'metatag.'
   in the parse-metadata. For instance to index description and keywords, 
