@@ -137,7 +137,7 @@ public class Crawl extends Configured implements Tool {
       if (!Fetcher.isParsing(job)) {
         parseSegment.parse(segs[0]);    // parse it, if needed
       }
-      crawlDbTool.update(crawlDb, segs, true, true); // update crawldb
+      crawlDbTool.update(crawlDb, segs, false, false); // update crawldb
     }
     if (i > 0) {
       linkDbTool.invert(linkDb, segments, true, true, false); // invert links
