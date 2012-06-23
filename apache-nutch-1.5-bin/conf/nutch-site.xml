@@ -5,6 +5,9 @@
 
 <configuration>
 
+
+<!-- http properties -->
+
 <property>
   <name>http.agent.name</name>
   <value>Googlebot</value>
@@ -72,8 +75,40 @@
 </property>
 
 <property>
+  <name>http.max.delays</name>
+  <value>20</value>
+  <description>The number of times a thread will delay when trying to
+  fetch a page.  Each time it finds that a host is busy, it will wait
+  fetcher.server.delay.  After http.max.delays attepts, it will give
+  up on the page for now.</description>
+</property>
+
+
+
+<!-- fetcher properties -->
+
+<property>
+  <name>fetcher.server.delay</name>
+  <value>0.5</value>
+  <description>The number of seconds the fetcher will delay between 
+   successive requests to the same server.</description>
+</property>
+
+<property>
+ <name>fetcher.max.crawl.delay</name>
+ <value>10</value>
+ <description>
+ If the Crawl-Delay in robots.txt is set to greater than this value (in
+ seconds) then the fetcher will skip this page, generating an error report.
+ If set to -1 the fetcher will never skip such pages and will wait the
+ amount of time retrieved from robots.txt Crawl-Delay, however long that
+ might be.
+ </description>
+</property> 
+
+<property>
   <name>fetcher.threads.fetch</name>
-  <value>10</value>
+  <value>50</value>
   <description>The number of FetcherThreads the fetcher should use.
   This is also determines the maximum number of requests that are
   made at once (each FetcherThread handles one connection). The total
@@ -84,7 +119,7 @@
 
 <property>
   <name>fetcher.threads.per.queue</name>
-  <value>10</value>
+  <value>50</value>
   <description>This number is the maximum number of threads that
     should be allowed to access a queue at one time. Replaces 
     deprecated parameter 'fetcher.threads.per.host'.
@@ -92,16 +127,26 @@
 </property>
 
 <property>
- <name>fetcher.max.crawl.delay</name>
- <value>120</value>
- <description>
- If the Crawl-Delay in robots.txt is set to greater than this value (in
- seconds) then the fetcher will skip this page, generating an error report.
- If set to -1 the fetcher will never skip such pages and will wait the
- amount of time retrieved from robots.txt Crawl-Delay, however long that
- might be.
- </description>
-</property> 
+  <name>fetcher.queue.mode</name>
+  <value>byIP</value>
+  <description>Determines how to put URLs into queues. Default value is 'byHost', 
+  also takes 'byDomain' or 'byIP'. Replaces the deprecated parameter 
+  'fetcher.threads.per.host.by.ip'.
+  </description>
+</property>
+
+<property>
+  <name>fetcher.queue.depth.multiplier</name>
+  <value>500</value>
+  <description>(EXPERT)The fetcher buffers the incoming URLs into queues based on the [host|domain|IP]
+  (see param fetcher.queue.mode). The depth of the queue is the number of threads times the value of this parameter.
+  A large value requires more memory but can improve the performance of the fetch when the order of the URLS in the fetch list
+  is not optimal.
+  </description>
+</property>
+
+
+<!-- web db properties -->
 
 <property>
   <name>db.ignore.external.links</name>
@@ -123,7 +168,7 @@
 
 <property>
   <name>db.update.max.inlinks</name>
-  <value>10</value>
+  <value>100</value>
   <description>Maximum number of inlinks to take into account when updating 
   a URL score in the crawlDB. Only the best scoring inlinks are kept. 
   </description>
@@ -131,7 +176,7 @@
 
 <property>
   <name>db.max.inlinks</name>
-  <value>10</value>
+  <value>100</value>
   <description>Maximum number of Inlinks per URL to be kept in LinkDb.
   If "invertlinks" finds more inlinks than this number, only the first
   N inlinks will be stored, and the rest will be discarded.
@@ -153,6 +198,21 @@
   created with this implementation will be used for duplicate detection
   and removal.</description>
 </property>
+
+
+
+<!-- urlpartitioner properties -->
+
+<property>
+  <name>partition.url.mode</name>
+  <value>byIP</value>
+  <description>Determines how to partition URLs. Default value is 'byHost', 
+  also takes 'byDomain' or 'byIP'. 
+  </description>
+</property>
+
+
+<!-- parser properties -->
 
 <property>
   <name>parser.html.outlinks.ignore_tags</name>
