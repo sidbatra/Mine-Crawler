@@ -24,8 +24,8 @@ end
 @job_id = ""
 
 if @env.start_with? 'p'
-  @instances = 31
-  @spot_instances = 30
+  @instances = 1
+  @spot_instances = 0
   @spot_price = 0.04
 else
   @instances = 2
@@ -80,11 +80,9 @@ command = "./elastic-mapreduce/elastic-mapreduce --create "\
           "--hive-interactive "\
           "--alive "\
           "--name 'Crawl #{@env.capitalize} #{@name}' "\
-          "--master-instance-type m1.large "\
+          "--master-instance-type m2.2xlarge "\
           "--slave-instance-type c1.medium "\
           "--num-instances #{@instances} "\
-          "--instance-group task --instance-type m1.small "\
-          "--instance-count #{@spot_instances} --bid-price #{@spot_price} "\
           "--key-pair ec2-bootup "\
           "--availability-zone us-east-1b "\
           "--log-uri s3n://#{@bucket}/#{@name}/logs "\
@@ -97,6 +95,9 @@ command = "./elastic-mapreduce/elastic-mapreduce --create "\
           "--arg mapred.reduce.tasks.speculative.execution=false "\
           "--bootstrap-action s3n://#{@bucket}/#{@name}/bootstrap.sh "\
           "--arg s3n://#{@bucket}/#{@name}/hash.txt"
+
+          #"--instance-group task --instance-type m1.small "\
+          #"--instance-count #{@spot_instances} --bid-price #{@spot_price} "\
 
 puts output = `#{command}`
 
