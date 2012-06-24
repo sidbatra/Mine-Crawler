@@ -84,12 +84,23 @@
 </property>
 
 
+<!-- generate properties -->
+
+<property>
+  <name>generate.max.count</name>
+  <value>10000</value>
+  <description>The maximum number of urls in a single
+  fetchlist.  -1 if unlimited. The urls are counted according
+  to the value of the parameter generator.count.mode.
+  </description>
+</property>
+
 
 <!-- fetcher properties -->
 
 <property>
   <name>fetcher.server.delay</name>
-  <value>0.1</value>
+  <value>0.2</value>
   <description>The number of seconds the fetcher will delay between 
    successive requests to the same server.</description>
 </property>
@@ -108,7 +119,7 @@
 
 <property>
   <name>fetcher.threads.fetch</name>
-  <value>100</value>
+  <value>1000</value>
   <description>The number of FetcherThreads the fetcher should use.
   This is also determines the maximum number of requests that are
   made at once (each FetcherThread handles one connection). The total
@@ -119,7 +130,7 @@
 
 <property>
   <name>fetcher.threads.per.queue</name>
-  <value>100</value>
+  <value>5</value>
   <description>This number is the maximum number of threads that
     should be allowed to access a queue at one time. Replaces 
     deprecated parameter 'fetcher.threads.per.host'.
@@ -128,7 +139,7 @@
 
 <property>
   <name>fetcher.queue.mode</name>
-  <value>byIP</value>
+  <value>byHost</value>
   <description>Determines how to put URLs into queues. Default value is 'byHost', 
   also takes 'byDomain' or 'byIP'. Replaces the deprecated parameter 
   'fetcher.threads.per.host.by.ip'.
@@ -137,7 +148,7 @@
 
 <property>
   <name>fetcher.queue.depth.multiplier</name>
-  <value>1000</value>
+  <value>100</value>
   <description>(EXPERT)The fetcher buffers the incoming URLs into queues based on the [host|domain|IP]
   (see param fetcher.queue.mode). The depth of the queue is the number of threads times the value of this parameter.
   A large value requires more memory but can improve the performance of the fetch when the order of the URLS in the fetch list
@@ -205,7 +216,7 @@
 
 <property>
   <name>partition.url.mode</name>
-  <value>byIP</value>
+  <value>byHost</value>
   <description>Determines how to partition URLs. Default value is 'byHost', 
   also takes 'byDomain' or 'byIP'. 
   </description>
