@@ -180,9 +180,11 @@ public class SegmentReader extends Configured implements
       Writable value = values.next().get(); // unwrap
       if (value instanceof Content) {
         String content = new String(((Content) value).getContent());
-        content = content.replaceAll("(\\r|\\n|\\t)"," ");
 
-        dump.append(key.toString()).append("\t").append(content);
+        if(content.contains("og:title")) {
+          content = content.replaceAll("(\\r|\\n|\\t)"," ");
+          dump.append(key.toString()).append("\t").append(content);
+        }
       }
       //if (value instanceof CrawlDatum) {
       //  dump.append("\nCrawlDatum::\n").append(((CrawlDatum) value).toString());
@@ -196,7 +198,10 @@ public class SegmentReader extends Configured implements
       //  LOG.warn("Unrecognized type: " + value.getClass());
       //}
     }
-    output.collect(key, new Text(dump.toString()));
+
+    if(dump.length() > 0) {
+      output.collect(key, new Text(dump.toString()));
+    }
   }
 
   public void dump(Path segment, Path output) throws IOException {

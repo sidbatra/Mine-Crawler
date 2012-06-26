@@ -47,7 +47,7 @@ STDIN.each_line do |line|
   ##
   # Test if the html contains a product.
   ##
-  next unless html.match("og:title")
+  #next unless html.match("og:title")
 
 
   ##
