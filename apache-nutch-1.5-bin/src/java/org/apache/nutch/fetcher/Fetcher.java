@@ -677,17 +677,17 @@ public class Fetcher extends Configured implements Tool,
                 continue;
               }
               if (rules.getCrawlDelay() > 0) {
-                if (rules.getCrawlDelay() > maxCrawlDelay) {
-                  // unblock
-                  fetchQueues.finishFetchItem(fit, true);
-                  LOG.debug("Crawl-Delay for " + fit.url + " too long (" + rules.getCrawlDelay() + "), skipping");
-                  output(fit.url, fit.datum, null, ProtocolStatus.STATUS_ROBOTS_DENIED, CrawlDatum.STATUS_FETCH_GONE);
-                  reporter.incrCounter("FetcherStatus", "robots_denied_maxcrawldelay", 1);
-                  continue;
-                } else {
-                  FetchItemQueue fiq = fetchQueues.getFetchItemQueue(fit.queueID);
-                  fiq.crawlDelay = rules.getCrawlDelay();
-                }
+              //  if (rules.getCrawlDelay() > maxCrawlDelay) {
+              //    // unblock
+              //    fetchQueues.finishFetchItem(fit, true);
+              //    LOG.debug("Crawl-Delay for " + fit.url + " too long (" + rules.getCrawlDelay() + "), skipping");
+              //    output(fit.url, fit.datum, null, ProtocolStatus.STATUS_ROBOTS_DENIED, CrawlDatum.STATUS_FETCH_GONE);
+              //    reporter.incrCounter("FetcherStatus", "robots_denied_maxcrawldelay", 1);
+              //    continue;
+              //  } else {
+              //    FetchItemQueue fiq = fetchQueues.getFetchItemQueue(fit.queueID);
+              //    fiq.crawlDelay = 1;//rules.getCrawlDelay();
+              //  }
               }
               ProtocolOutput output = protocol.getProtocolOutput(fit.url, fit.datum);
               ProtocolStatus status = output.getStatus();
