@@ -20,7 +20,7 @@ if @env.start_with? "s"
   @top_n = 1000
   @threads = 20
 else
-  @depth = 10
+  @depth = 15
   @top_n = 1000000
   @threads = 1000
 end
