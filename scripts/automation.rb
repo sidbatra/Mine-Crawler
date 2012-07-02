@@ -87,12 +87,23 @@ command = "./elastic-mapreduce/elastic-mapreduce --create "\
           "--availability-zone us-east-1b "\
           "--log-uri s3n://#{@bucket}/#{@name}/logs "\
           "--enable-debugging "\
-          "--bootstrap-action s3n://elasticmapreduce/bootstrap-actions/configurations/latest/memory-intensive "\
           "--bootstrap-action s3n://elasticmapreduce/bootstrap-actions/configure-hadoop "\
           "--arg --site-key-value "\
           "--arg mapred.reduce.tasks.speculative.execution=false "\
           "--arg --mapred-key-value "\
           "--arg mapred.reduce.tasks.speculative.execution=false "\
+          "--arg --site-key-value "\
+          "--arg mapred.child.java.opts=-Xmx2048m "\
+          "--arg --mapred-key-value "\
+          "--arg mapred.child.java.opts=-Xmx2048m "\
+          "--arg --site-key-value "\
+          "--arg mapred.tasktracker.map.tasks.maximum=10 "\
+          "--arg --mapred-key-value "\
+          "--arg mapred.tasktracker.map.tasks.maximum=10 "\
+          "--arg --site-key-value "\
+          "--arg mapred.tasktracker.reduce.tasks.maximum=4 "\
+          "--arg --mapred-key-value "\
+          "--arg mapred.tasktracker.reduce.tasks.maximum=4 "\
           "--bootstrap-action s3n://#{@bucket}/#{@name}/bootstrap.sh "\
           "--arg s3n://#{@bucket}/#{@name}/hash.txt"
 
