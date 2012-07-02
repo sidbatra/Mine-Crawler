@@ -1,10 +1,13 @@
 *.jar
 *.job
 *.swp
-apache-nutch-1.4-bin/build/
-apache-nutch-1.4-bin/runtime/deploy/bin/nutch
-apache-nutch-1.4-bin/runtime/local/bin/nutch
+apache-nutch-*-bin/build/
+apache-nutch-*-bin/runtime/
+apache-nutch-*-bin/runtime/deploy/bin/nutch
+apache-nutch-*-bin/runtime/local/bin/nutch
 crawls/
+data/2012*
 data/*.txt
 data/products*
 data/urls/
+logs/
