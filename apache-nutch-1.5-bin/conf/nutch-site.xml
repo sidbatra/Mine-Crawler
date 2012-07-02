@@ -165,6 +165,24 @@
   </description>
 </property>
 
+<property>
+  <name>fetcher.timelimit.mins</name>
+  <value>360</value>
+  <description>This is the number of minutes allocated to the fetching.
+  Once this value is reached, any remaining entry from the input URL list is skipped 
+  and all active queues are emptied. The default value of -1 deactivates the time limit.
+  </description>
+</property>
+
+<property>
+  <name>fetcher.max.exceptions.per.queue</name>
+  <value>100</value>
+  <description>The maximum number of protocol-level exceptions (e.g. timeouts) per
+  host (or IP) queue. Once this value is reached, any remaining entries from this
+  queue are purged, effectively stopping the fetching from this host/IP. The default
+  value of -1 deactivates this limit.
+  </description>
+</property>
 
 <!-- web db properties -->
 
