@@ -3,6 +3,7 @@
 require 'rubygems'
 require 'nokogiri'
 require 'fastimage'
+require 'json'
 
 stores_file = "/home/hadoop/hash.txt"
 
@@ -15,8 +16,8 @@ stores_file = "/home/hadoop/hash.txt"
 STORES = {}
 File.open(stores_file,'r') do |file|
   file.each do |line|
-    domain,id = line.chomp.split "\t"
-    STORES[domain] = id.to_i
+    store = JSON.parse line.chomp
+    STORES[store['domain']] = store
   end
 end
 
@@ -41,8 +42,9 @@ STDIN.each_line do |line|
   images = []
   image = ""
   image_size = [0,0]
-  store_id = 0
+  @store = STORES[uri.host]
 
+  next unless @store
 
   ##
   # Test if the html contains a product.
@@ -148,15 +150,13 @@ STDIN.each_line do |line|
   end #if image length zero
 
 
-  store_id = STORES[uri.host]
-
   ##
   # Final test of output.
   ##
-  next if title.length.zero? || image.length.zero? || store_id.nil?
+  next if title.length.zero? || image.length.zero? 
 
   puts [url,title.gsub(/(\r|\n|\t)/," "),image,
-        store_id,description.gsub(/(\r|\n|\t)/," ")].join("\t")
+        @store['id'],description.gsub(/(\r|\n|\t)/," ")].join("\t")
 
   rescue => ex
     $stderr.puts "Error with url - #{url} : #{ex.message}"
