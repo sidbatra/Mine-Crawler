@@ -10,4 +10,5 @@ data/2012*
 data/*.txt
 data/products*
 data/urls/
+data/pages
 logs/
