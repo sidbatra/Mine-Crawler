@@ -116,12 +116,12 @@ STDIN.each_line do |line|
   if image.length.zero?
     doc.xpath("//img").each do |img|
       src = img['src']
-      next if src.nil? || src.length.zero?
+      next if src.nil? || src.length.zero? || src.match(/.gif$/i)
 
       begin
-        images << (src.match(/^http/) ? 
-                    URI.encode(src) : 
-                    URI.decode(uri.merge(URI.encode(src)).to_s).gsub("¥","\\"))
+        images << URI.encode(src.match(/^http/) ? 
+                              src : 
+                              uri.merge(URI.encode(src)).to_s)
       rescue => ex
         $stderr.puts "Error parsing image src - #{src} : #{ex.message}"
       end
