@@ -103,7 +103,7 @@ STDIN.each_line do |line|
     next if og_image.nil?
 
     begin
-      size = FastImage.size(og_image)
+      size = FastImage.size(URI.encode(og_image))
       image = og_image if size[0] > 149 || size[1] > 149
     rescue => ex
       $stderr.puts "Error fetching size of og img - #{og_image} : #{ex.message}"
@@ -120,7 +120,7 @@ STDIN.each_line do |line|
 
       begin
         images << (src.match(/^http/) ? 
-                    src : 
+                    URI.encode(src) : 
                     URI.decode(uri.merge(URI.encode(src)).to_s).gsub("¥","\\"))
       rescue => ex
         $stderr.puts "Error parsing image src - #{src} : #{ex.message}"
