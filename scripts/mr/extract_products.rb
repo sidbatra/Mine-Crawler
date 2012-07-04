@@ -148,20 +148,12 @@ STDIN.each_line do |line|
   end #if image length zero
 
 
-  ##
-  # Extract store id.
-  ##
-  STORES.each do |domain,id|
-    if url.match(domain) 
-      store_id = id 
-      break
-    end
-  end
+  store_id = STORES[uri.host]
 
   ##
   # Final test of output.
   ##
-  next if title.length.zero? || image.length.zero? || store_id.zero?
+  next if title.length.zero? || image.length.zero? || store_id.nil?
 
   puts [url,title.gsub(/(\r|\n|\t)/," "),image,
         store_id,description.gsub(/(\r|\n|\t)/," ")].join("\t")
