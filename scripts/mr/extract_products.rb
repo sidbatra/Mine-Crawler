@@ -110,7 +110,7 @@ STDIN.each_line do |line|
     rescue => ex
       $stderr.puts "Error fetching size of og img - #{og_image} : #{ex.message}"
     end
-  end
+  end if @store['use_og_image']
 
   ##
   # Extract product images from html.
