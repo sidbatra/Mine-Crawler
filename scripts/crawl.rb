@@ -16,9 +16,9 @@ puts @env,@name,@bucket
 
 
 if @env.start_with? "s"
-  @depth = 6
-  @top_n = 1000
-  @threads = 20
+  @depth = 5
+  @top_n = 250
+  @threads = 50
 else
   @depth = 15
   @top_n = 1000000
