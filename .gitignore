@@ -11,4 +11,4 @@ data/*.txt
 data/products*
 data/urls/
 data/pages
-logs/
+log/
