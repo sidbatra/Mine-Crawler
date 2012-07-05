@@ -28,9 +28,9 @@ if @env.start_with? 'p'
   @spot_instances = 0
   @spot_price = 0.04
 else
-  @instances = 2
-  @spot_instances = 1
-  @spot_price = 0.06
+  @instances = 1
+  @spot_instances = 0
+  @spot_price = 0.04
 end
 
 
