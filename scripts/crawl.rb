@@ -22,9 +22,13 @@ if @env.start_with? "s"
 else
   @depth = 15
   @top_n = 1000000
-  @threads = 1000
+  @threads = 500
 end
 
+@nutch_bin = "deploy/bin/nutch"
+@crawl_dir = "/crawl"
+@crawldb_dir = "#{@crawl_dir}/crawldb"
+@segments_dir = "#{@crawl_dir}/segments"
 
 #############################
 # Setup crawl directory
@@ -39,15 +43,41 @@ puts `hadoop fs -mkdir /crawl`
 # Launch crawl
 #############################
 
-command = "deploy/bin/nutch crawl "\
-          "s3n://#{@bucket}/#{@name}/urls "\
-          "-depth #{@depth} "\
-          "-topN #{@top_n} "\
-          "-dir /crawl "\
-          "-threads #{@threads}"
+#command = "deploy/bin/nutch crawl "\
+#          "s3n://#{@bucket}/#{@name}/urls "\
+#          "-depth #{@depth} "\
+#          "-topN #{@top_n} "\
+#          "-dir /crawl "\
+#          "-threads #{@threads}"
+#
+#puts `#{command}`
 
-puts `#{command}`
+inject = "#{@nutch_bin} inject "\
+          "#{@crawldb_dir} "\
+          "s3n://#{@bucket}/#{@name}/urls"
+puts `#{inject}`
 
+
+(1..@depth).each do |depth|
+
+  generate = "#{@nutch_bin} generate "\
+              "#{@crawldb_dir} "\
+              "#{@segments_dir} "\
+              "-topN #{@top_n}"
+  puts `#{generate}`
+
+  segment = `hadoop fs -ls #{@crawl_dir}/segments | tail -1`.split.last
+
+  fetch = "#{@nutch_bin} fetch #{segment} -threads #{@threads}"
+  puts `#{fetch}`
+
+  parse = "#{@nutch_bin} parse #{segment}"
+  puts `#{parse}`
+
+  update = "#{@nutch_bin} updatedb #{@crawldb_dir} #{segment}"
+  puts `#{update}`
+
+end
 
 
 #############################
