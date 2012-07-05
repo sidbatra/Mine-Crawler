@@ -1,12 +1,13 @@
 #!/usr/bin/env ruby
 
 require 'rubygems'
+require 'logger'
 require 'aws/s3'
 
 
-if ARGV.length < 4
+if ARGV.length < 5
   puts "Usage - ruby automate.rb <environment> <seed.txt path> "\
-        "<hash.txt path> <pem file path>"
+        "<hash.txt path> <pem file path> <log path>"
   exit
 elsif !["staging","production"].include?(ARGV[0])
   puts "Invalid environment. Valid options - staging,production"
@@ -17,11 +18,13 @@ end
 @seed_path = ARGV[1]
 @hash_path = ARGV[2]
 @key_pair_path = ARGV[3]
+@log_path = ARGV[4]
 
 @name = Time.now.to_i.to_s
 @bucket = "denwen-mine-crawler-#{@env}"
 @nutch_path = "./apache-nutch-1.5-bin"
 @job_id = ""
+@logger = Logger.new @log_path
 
 if @env.start_with? 'p'
   @instances = 1
@@ -34,7 +37,8 @@ else
 end
 
 
-puts @env,@seed_path,@hash_path,@key_pair_path,@name,@bucket,@instances
+@logger.info [@env,@seed_path,@hash_path,@key_pair_path,
+              @name,@bucket,@instances].join("\n")
 
 
 
@@ -67,8 +71,8 @@ AWS::S3::S3Object.store(
 # Build nutch
 #############################
 
-puts `cd #{@nutch_path} && ant`
-puts `mv #{@nutch_path}/runtime/deploy/apache-nutch-1.5.job #{@nutch_path}/runtime/deploy/nutch-1.5.job`
+@logger.info `cd #{@nutch_path} && ant`
+@logger.info `mv #{@nutch_path}/runtime/deploy/apache-nutch-1.5.job #{@nutch_path}/runtime/deploy/nutch-1.5.job`
 
 
 
@@ -110,12 +114,12 @@ command = "./elastic-mapreduce/elastic-mapreduce --create "\
           #"--instance-group task --instance-type m1.small "\
           #"--instance-count #{@spot_instances} --bid-price #{@spot_price} "\
 
-puts output = `#{command}`
+@logger.info output = `#{command}`
 
 if output.start_with? "Created"
   @job_id = output.split.last
 else
-  puts "Error launching EMR cluster"
+  @logger.info "Error launching EMR cluster"
   exit
 end
 
@@ -129,11 +133,11 @@ state = ""
 while state != "WAITING"
   sleep 30
 
-  puts output = `./elastic-mapreduce/elastic-mapreduce --list #{@job_id}`
+  @logger.info output = `./elastic-mapreduce/elastic-mapreduce --list #{@job_id}`
   state = output.split[1]
 
   if state == "TERMINATED" || state == "FAILED" || state == "SHUTTING_DOWN"
-    puts "Error booting up EMR cluster"
+    @logger.info "Error booting up EMR cluster"
     exit
   end
 end
@@ -150,7 +154,7 @@ command = "./elastic-mapreduce/elastic-mapreduce #{@job_id} "\
           "--scp #{@nutch_path}/runtime/deploy/ "\
           "--to /home/hadoop "
 
-puts `#{command}`
+@logger.info `#{command}`
           
 
 #############################
@@ -161,11 +165,19 @@ command = "./elastic-mapreduce/elastic-mapreduce #{@job_id} "\
           "--key-pair-file #{@key_pair_path} "\
           "--ssh 'sh -c \"cd /home/hadoop ; nohup ruby scripts/crawl.rb #{@env} #{@name} #{@bucket} > crawl.txt 2>&1 &\"'"
 
-puts `#{command}`
+@logger.info `#{command}`
 
 
 
+# Make sure logs are written.
+sleep 5
 
+#############################
+# Upload launch log
+#############################
 
-# download extracted products distributed table.
-# insert into products db
+AWS::S3::S3Object.store(
+  "#{@name}/launch.txt",
+  open(@log_path),
+  @bucket)
+
