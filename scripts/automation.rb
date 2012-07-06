@@ -6,9 +6,9 @@ require 'aws/s3'
 require 'yaml'
 
 
-if ARGV.length < 5
+if ARGV.length < 6
   puts "Usage - ruby automate.rb <environment> <seed.txt path> "\
-        "<hash.txt path> <pem file path> <log path>"
+        "<hash.txt path> <pem file path> <log path> <name>"
   exit
 elsif !["staging","production"].include?(ARGV[0])
   puts "Invalid environment. Valid options - staging,production"
@@ -20,8 +20,9 @@ end
 @hash_path = ARGV[2]
 @key_pair_path = ARGV[3]
 @log_path = ARGV[4]
+@name = ARGV[5]
 
-@name = Time.now.to_i.to_s
+#@name = Time.now.to_i.to_s
 @bucket = "denwen-mine-crawler-#{@env}"
 @nutch_path = "./apache-nutch-1.5-bin"
 @job_id = ""
