@@ -2,6 +2,7 @@
 
 require 'rubygems'
 require 'yaml'
+require 'base64'
 require 'aws'
 require '/home/hadoop/external/fifo/lib/fifo.rb'
 
@@ -16,7 +17,7 @@ end
 @env = ARGV[0]
 @name = ARGV[1]
 @bucket = ARGV[2]
-@job_id = ARGV[3]
+@job_id = Base64.decode64(ARGV[3])
 
 puts @env,@name,@bucket,@job_id
 

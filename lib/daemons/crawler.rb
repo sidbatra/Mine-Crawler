@@ -13,7 +13,7 @@ require 'yaml'
 require File.join(ROOT_PATH,"external/fifo/lib/fifo.rb")
 
 
-@logger = Logger.new(File.join(ROOT_PATH,"log/crawler.rb.log"))
+LOGGER = Logger.new(File.join(ROOT_PATH,"log/crawler.rb.log"))
 @env = ENV['RAILS_ENV']
 
 CONFIG = YAML.load_file(File.join(ROOT_PATH,"config/config.yml"))[@env]
@@ -54,7 +54,20 @@ class Crawler
     command = "cd #{ROOT_PATH} && ruby scripts/automation.rb "\
               "#{ENV['RAILS_ENV']} #{urls_path} #{hash_path} #{name}"
 
-    puts `#{command}`
+    LOGGER.info `#{command}`
+  end
+
+  # Terminate an existing crawl.
+  #
+  def self.stop(job_id,bucket,name)
+    command = "cd #{ROOT_PATH} && ./elastic-mapreduce/elastic-mapreduce "\
+              "--terminate #{job_id}"
+    LOGGER.info `#{command}`
+
+    ProcessingQueue.push Object.const_set("Product",Class.new),
+                      :import_crawled,
+                      bucket,
+                      "#{name}/products"
   end
 
 end
@@ -76,16 +89,16 @@ while($running) do
       payload.process
       end_time = Time.now
 
-      @logger.info "Finished #{payload.to_s} #{end_time - start_time}"
+      LOGGER.info "Finished #{payload.to_s} #{end_time - start_time}"
 
     rescue => ex
       payload.failed
 
       if payload.attempts < 3
-        @logger.info "Recovering #{payload.to_s}"
+        LOGGER.info "Recovering #{payload.to_s}"
         payload.queue.push(payload)
       else
-        @logger.info "#{ex.message}\n#{ex.backtrace}"
+        LOGGER.info "#{ex.message}\n#{ex.backtrace}"
       end
     end
 

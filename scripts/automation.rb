@@ -4,6 +4,7 @@ require 'rubygems'
 require 'logger'
 require 'aws/s3'
 require 'yaml'
+require 'base64'
 
 
 if ARGV.length < 4
@@ -172,7 +173,7 @@ command = "./elastic-mapreduce/elastic-mapreduce #{@job_id} "\
 
 command = "./elastic-mapreduce/elastic-mapreduce #{@job_id} "\
           "--key-pair-file #{@key_pair_path} "\
-          "--ssh 'sh -c \"cd /home/hadoop ; nohup ruby scripts/crawl.rb #{@env} #{@name} #{@bucket} #{@job_id} > crawl.txt 2>&1 &\"'"
+          "--ssh 'sh -c \"cd /home/hadoop ; nohup ruby scripts/crawl.rb #{@env} #{@name} #{@bucket} #{Base64.encode64(@job_id).chomp} > crawl.txt 2>&1 &\"'"
 
 @logger.info `#{command}`
 
