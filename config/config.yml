@@ -1,0 +1,16 @@
+# Constants shared across deployment environments
+#
+common: &common
+  :aws_access_id: AKIAJWYCAWDPAAKLNKSQ
+  :aws_secret_key: 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 
+  :queue:
+    :proc: mine_processing
+    :secondary_proc: mine_secondary_processing
+    :crawl: crawl
+
+staging: &staging
+  <<: *common
+
+production: &production
+  <<: *common
+

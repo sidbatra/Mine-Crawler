@@ -3,6 +3,7 @@
 require 'rubygems'
 require 'logger'
 require 'aws/s3'
+require 'yaml'
 
 
 if ARGV.length < 5
@@ -40,6 +41,7 @@ end
 @logger.info [@env,@seed_path,@hash_path,@key_pair_path,
               @name,@bucket,@instances].join("\n")
 
+CONFIG = YAML.load_file(File.join(File.dirname(__FILE__),"../config/config.yml"))[@env]
 
 
 #############################
@@ -47,8 +49,8 @@ end
 #############################
 
 AWS::S3::Base.establish_connection!(
-  :access_key_id     => "AKIAJWYCAWDPAAKLNKSQ",
-  :secret_access_key => "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")
+  :access_key_id     => CONFIG[:aws_access_id],
+  :secret_access_key => CONFIG[:aws_secret_key])
 
 AWS::S3::S3Object.store(
   "#{@name}/bootstrap.sh",
