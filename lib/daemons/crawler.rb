@@ -24,10 +24,37 @@ CrawlQueue = FIFO::Queue.new [@env,CONFIG[:queue][:crawl]].join("_")
 
 
 
+# Crawler class is an endpoint for public methods
+# accessible via the CrawlQueue.
+#
 class Crawler
 
+  # Launch a new crawl job for the given stores.
+  #
   def self.start(json)
+    name = Time.now.to_i.to_s
+    base_path = File.join(ROOT_PATH,"data/#{name}")
+    urls_path = File.join(base_path,"urls.txt")
+    hash_path = File.join(base_path,"hash.txt")
     stores = JSON.parse json
+
+    Dir.mkdir base_path
+
+    urls_file = File.open(urls_path,'w')
+    hash_file = File.open(hash_path,'w')
+
+    stores.each do |store|
+      urls_file.puts "#{store['launch_url']}\tnutch.score=20"
+      hash_file.puts store.to_json
+    end
+
+    urls_file.close
+    hash_file.close
+
+    command = "cd #{ROOT_PATH} && ruby scripts/automation.rb "\
+              "#{ENV['RAILS_ENV']} #{urls_path} #{hash_path} #{name}"
+
+    puts `#{command}`
   end
 
 end
@@ -57,6 +84,8 @@ while($running) do
       if payload.attempts < 3
         @logger.info "Recovering #{payload.to_s}"
         payload.queue.push(payload)
+      else
+        @logger.info "#{ex.message}\n#{ex.backtrace}"
       end
     end
 
