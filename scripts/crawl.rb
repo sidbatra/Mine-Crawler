@@ -1,7 +1,12 @@
 #!/usr/bin/env ruby
 
-if ARGV.length < 3
-  puts "Usage - ruby crawl.rb <environment> <name> <bucket>"
+require 'rubygems'
+require 'yaml'
+require 'aws'
+require '/home/hadoop/external/fifo/lib/fifo.rb'
+
+if ARGV.length < 4
+  puts "Usage - ruby crawl.rb <environment> <name> <bucket> <job_id> "
   exit
 elsif !["staging","production"].include?(ARGV[0])
   puts "Invalid environment. Valid options - staging,production"
@@ -11,8 +16,12 @@ end
 @env = ARGV[0]
 @name = ARGV[1]
 @bucket = ARGV[2]
+@job_id = ARGV[3]
 
-puts @env,@name,@bucket
+puts @env,@name,@bucket,@job_id
+
+
+CONFIG = YAML.load_file("/home/hadoop/config/config.yml")[@env]
 
 
 if @env.start_with? "s"
@@ -30,13 +39,17 @@ end
 @crawldb_dir = "#{@crawl_dir}/crawldb"
 @segments_dir = "#{@crawl_dir}/segments"
 
+
+FIFO::QueueManager.setup(CONFIG[:aws_access_id],CONFIG[:aws_secret_key])
+CrawlQueue = FIFO::Queue.new [@env,CONFIG[:queue][:crawl]].join("_")
+
+
 #############################
 # Setup crawl directory
 #############################
 
 #puts `hadoop distcp s3n://#{@bucket}/crawl /crawl`
 puts `hadoop fs -mkdir /crawl`
-
 
 
 #############################
@@ -116,4 +129,10 @@ puts `hadoop distcp /hive/products s3n://#{@bucket}/#{@name}/products`
 
 #puts `hadoop distcp -overwrite /crawl s3n://#{@bucket}/crawl`
 #puts `hadoop distcp /crawl s3n://#{@bucket}/#{@name}/crawl`
+
+#############################
+# Finish job
+#############################
+
+CrawlQueue.push Object.const_set("Crawler",Class.new),:stop,@job_id,@bucket,@name
 

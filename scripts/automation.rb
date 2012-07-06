@@ -157,6 +157,10 @@ command = "./elastic-mapreduce/elastic-mapreduce #{@job_id} "\
           "--scp scripts/ "\
           "--to /home/hadoop "\
           "--scp #{@nutch_path}/runtime/deploy/ "\
+          "--to /home/hadoop "\
+          "--scp external/ "\
+          "--to /home/hadoop "\
+          "--scp config/ "\
           "--to /home/hadoop "
 
 @logger.info `#{command}`
@@ -168,7 +172,7 @@ command = "./elastic-mapreduce/elastic-mapreduce #{@job_id} "\
 
 command = "./elastic-mapreduce/elastic-mapreduce #{@job_id} "\
           "--key-pair-file #{@key_pair_path} "\
-          "--ssh 'sh -c \"cd /home/hadoop ; nohup ruby scripts/crawl.rb #{@env} #{@name} #{@bucket} > crawl.txt 2>&1 &\"'"
+          "--ssh 'sh -c \"cd /home/hadoop ; nohup ruby scripts/crawl.rb #{@env} #{@name} #{@bucket} #{@job_id} > crawl.txt 2>&1 &\"'"
 
 @logger.info `#{command}`
 

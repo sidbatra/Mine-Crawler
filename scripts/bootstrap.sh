@@ -14,5 +14,6 @@ sudo gem update --system
 sudo gem install nokogiri --version 1.5.5
 sudo gem install fastimage --version 1.2.13
 sudo gem install json --version 1.7.3
+sudo gem install aws --version 2.5.6
 
 hadoop fs -copyToLocal $1 /home/hadoop/
