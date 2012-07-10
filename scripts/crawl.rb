@@ -118,10 +118,11 @@ puts `hive -f "scripts/hive.sql"`
 
 
 #############################
-# Upload products to s3
+# Upload results to s3
 #############################
 
 puts `hadoop distcp /hive/products s3n://#{@bucket}/#{@name}/products`
+puts `hadoop fs -copyFromLocal /home/hadoop/crawl.txt s3n://#{@bucket}/#{@name}/crawl.txt`
 
 
 #############################
